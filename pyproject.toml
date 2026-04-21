@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "f1-immigration-assistant"
+version = "0.1.0"
+description = "Georgetown F-1 Immigration Compliance Assistant: a BM25-based IR + RAG package over approved OGS pages."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "DSAN5400 Team" },
+]
+keywords = ["information-retrieval", "bm25", "rag", "f-1", "immigration", "georgetown"]
+
+dependencies = [
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "rank-bm25>=0.2.2",
+    "openai>=1.40",
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+f1a = "f1_immigration_assistant.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/GU-DSAN5400-FA25/f1-immigration-assistant"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/f1_immigration_assistant"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

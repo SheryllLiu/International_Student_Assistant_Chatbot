@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# uv
+.uv/
+
+# IDE
+.vscode/
+.idea/
+
+# Caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Crawled data and indexes (large / regenerable)
+data/raw/
+data/index/
+data/cache/
+*.pkl
+*.joblib
+
+# OS
+.DS_Store
+Thumbs.db
