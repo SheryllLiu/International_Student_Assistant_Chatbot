@@ -1,0 +1,18 @@
+version 1.0: implemented BM25 retreival pipeline and baseline answer generation. The current issue is the answer sentence selection is incorrect
+[2026-04-22 11:40:36] search.py query='How many hours can I work on campus during the semester?' top_k=2
+[2026-04-22 11:46:00] version 2.0: improved answer sentence selection by ranking sentences based on query overlap. The current issue is the answer still includes extra nearby sentences that are less directly relevant.
+[2026-04-22 11:46:42] answer.py query='How many hours can I work on campus during the semester?' top_k=5
+[2026-04-22 11:52:02] answer.py query='How many hours can I work on campus during the semester?' top_k=5
+[2026-04-22 11:52:02] answer.py saved answer JSON to data/results/work_hours_answer.json
+[2026-04-22 11:52:20] search.py query='How many hours can I work on campus during the semester?' top_k=5
+[2026-04-22 11:52:33] parser.py started
+[2026-04-22 11:52:33] parser.py parsed 1 documents into /private/var/folders/0d/tn_f79nn38z49m_52gwmwcqm0000gn/T/pytest-of-himabathula/pytest-16/test_write_parsed_json_saves_c0/parsed/parsed_docs.json
+[2026-04-22 11:52:33] chunker.py started
+[2026-04-22 11:52:33] chunker.py created 2 chunks in /private/var/folders/0d/tn_f79nn38z49m_52gwmwcqm0000gn/T/pytest-of-himabathula/pytest-16/test_write_chunks_json_saves_c0/chunks/chunks.json
+[2026-04-22 11:52:33] retriever.py started
+[2026-04-22 11:52:33] retriever.py built BM25 index with 1 chunks at /private/var/folders/0d/tn_f79nn38z49m_52gwmwcqm0000gn/T/pytest-of-himabathula/pytest-16/test_build_and_save_index_then0/index/bm25_index.pkl
+[2026-04-22 11:52:33] retriever.py started
+[2026-04-22 11:52:33] retriever.py built BM25 index with 1 chunks at /private/var/folders/0d/tn_f79nn38z49m_52gwmwcqm0000gn/T/pytest-of-himabathula/pytest-16/test_write_search_results_json0/index/bm25_index.pkl
+[2026-04-22 11:52:33] retriever.py saved 1 search results for query 'visa application' to /private/var/folders/0d/tn_f79nn38z49m_52gwmwcqm0000gn/T/pytest-of-himabathula/pytest-16/test_write_search_results_json0/results/search_results.json
+[2026-04-22 11:56:14] answer.py query='How many hours can I work on campus during the semester?' top_k=5
+[2026-04-22 11:56:14] answer.py saved answer JSON to data/results/work_hours_answer.json

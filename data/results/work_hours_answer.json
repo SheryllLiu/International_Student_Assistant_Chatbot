@@ -1,0 +1,52 @@
+{
+  "query": "How many hours can I work on campus during the semester?",
+  "answer": "Based on the retrieved documents: Off-Campus Off-campus employment is work that that takes place outside of a school campus. If English language training students participate in on-campus or off-campus employment opportunities, they cannot work more than 20 hours per week while school is in session and must continue to enroll in a full course of study. On-campus employment is specific to work that takes place on campus or at an off-campus location that is educationally affiliated with the school.",
+  "citations": [
+    "https://studyinthestates.dhs.gov/students/work/working-in-the-united-states",
+    "https://studyinthestates.dhs.gov/students/study/full-course-of-study",
+    "https://studyinthestates.dhs.gov/students/get-started/english-language-training",
+    "https://studyinthestates.dhs.gov/students/study/maintain-f-and-m-status-in-emergency-events"
+  ],
+  "supporting_chunks": [
+    {
+      "chunk_id": "working_in_the_united_states_study_in_the_states_chunk_2",
+      "url": "https://studyinthestates.dhs.gov/students/work/working-in-the-united-states",
+      "title": "Working in the United States | Study in the States",
+      "chunk_index": 2,
+      "text": "In order to apply, talk to your DSO. If approved, your DSO will provide you with a letter of approval. Take this letter from your DSO and a letter of approval from your employer to apply for a Social Security Number (SSN). All students who wish to work must apply for a Social Security Number. If you participate in on-campus employment, you may not work more than 20 hours per week when school is in session. If you have additional questions, please visit the F-1 Student On-Campus page on ICE.gov . Off-Campus Off-campus employment is work that that takes place outside of a school campus.",
+      "score": 11.160820026229679
+    },
+    {
+      "chunk_id": "full_course_of_study_study_in_the_states_chunk_2",
+      "url": "https://studyinthestates.dhs.gov/students/study/full-course-of-study",
+      "title": "Full Course of Study | Study in the States",
+      "chunk_index": 2,
+      "text": "If you are an F-1 or M-1 student at a K-12 school and do not know how many hours per week fulfill your school’s requirement for normal progress toward graduation or completion of the program of study, talk to your DSO . Your DSO will know how many hours of class you need to attend each week and can tell you if your class schedule meets the requirement. Full course of study requirements for post-secondary programs F-1 post-secondary requirements F-1 post-secondary students have a number of requirements they must abide by to remain compliant. F-1 undergraduate students at a college or university must take at least 12 credit hours per term.",
+      "score": 10.363581463634324
+    },
+    {
+      "chunk_id": "english_language_training_study_in_the_states_chunk_4",
+      "url": "https://studyinthestates.dhs.gov/students/get-started/english-language-training",
+      "title": "English Language Training | Study in the States",
+      "chunk_index": 4,
+      "text": "For more information, please visit the Transferring to Another School page. Employment As Active F-1 students, English language training students may seek approval for on-campus and off-campus employment, as well as an internship with an international organization. However, they are ineligible for any practical training opportunities. If English language training students participate in on-campus or off-campus employment opportunities, they cannot work more than 20 hours per week while school is in session and must continue to enroll in a full course of study. English language training students must also obtain a Social Security number with the Social Security Administration. For additional information, visit the Working in the United States page and Obtaining a Social Security Number page.",
+      "score": 8.983503323101896
+    },
+    {
+      "chunk_id": "working_in_the_united_states_study_in_the_states_chunk_1",
+      "url": "https://studyinthestates.dhs.gov/students/work/working-in-the-united-states",
+      "title": "Working in the United States | Study in the States",
+      "chunk_index": 1,
+      "text": "That means that you will have to leave the United States immediately, and you may not be allowed to return. Depending on your status and program of study , you may be eligible for the following type of employment opportunities while you study in the United States: On-Campus On-campus employment is work that F-1 students whose status is Active in SEVIS may apply for. On-campus employment is specific to work that takes place on campus or at an off-campus location that is educationally affiliated with the school. Examples of on-campus employment include working at a university bookstore or cafeteria. Active F-1 students may apply for on-campus employment up to 30 days before the start of classes.",
+      "score": 8.044943672556222
+    },
+    {
+      "chunk_id": "maintain_f_and_m_status_in_emergency_events_study_in_the_states_chunk_3",
+      "url": "https://studyinthestates.dhs.gov/students/study/maintain-f-and-m-status-in-emergency-events",
+      "title": "Maintain F and M Status in Emergency Events | Study in the States",
+      "chunk_index": 3,
+      "text": "Sign up for campus emergency alerts and local information so you can remain informed about what to do while situations unfold and stay updated on the operational status of your school. To learn more about DHS’ work to strengthen campus resilience and international student efforts on U.S. campuses, visit the DHS website . Emergency Planning",
+      "score": 7.958704141591773
+    }
+  ]
+}
