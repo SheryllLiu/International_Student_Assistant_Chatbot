@@ -1,9 +1,0 @@
-{
-  "stats": {"total_discovered": 87, "in_allowlist": 14, "denylisted": 12,
-            "html_candidates": 58, "pdf_candidates": 3},
-  "sitemaps_fetched": ["https://.../sitemap.xml", ...],
-  "in_allowlist": [...],
-  "denylisted": [{"url": "...", "matched": "j-1"}, ...],
-  "html_candidates": [...],
-  "pdf_candidates": [...]
-}

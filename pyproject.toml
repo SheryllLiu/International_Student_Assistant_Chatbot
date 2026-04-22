@@ -20,6 +20,8 @@ dependencies = [
     "rank-bm25>=0.2.2",
     "openai>=1.40",
     "click>=8.1",
+    "pandas>=2.3.3",
+    "lxml>=6.1.0",
 ]
 
 [project.optional-dependencies]
