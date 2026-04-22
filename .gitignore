@@ -25,7 +25,6 @@ venv/
 htmlcov/
 
 # Crawled data and indexes (large / regenerable)
-data/raw/
 data/index/
 data/cache/
 *.pkl
