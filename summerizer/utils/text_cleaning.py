@@ -19,7 +19,7 @@ No stemming, no lemmatization.
 
 Run batch cleaning from the repo root::
 
-    python utils/text_cleaning.py
+    python -m summerizer.utils.text_cleaning
 """
 from __future__ import annotations
 

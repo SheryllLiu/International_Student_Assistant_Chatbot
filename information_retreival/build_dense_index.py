@@ -16,8 +16,8 @@ BM25 pipeline uses the same rule, the two indices stay row-aligned and can be
 fused by ``row_id`` at query time.
  
 Run from repo root::
- 
-    python retrieval/build_dense_index.py
+
+    python -m information_retreival.build_dense_index
 """
 from __future__ import annotations
  
@@ -32,7 +32,7 @@ OUT_CORPUS = Path("data/processed/embedding_corpus.csv")
 OUT_INDEX_DIR = Path("data/indices")
 OUT_INDEX = OUT_INDEX_DIR / "faiss.index"
  
-MODEL_NAME = "BAAI/bge-small-en-v1.5"
+MODEL_NAME = "/home/shery/models/bge-small-en-v1.5"
 BGE_MAX_TOKENS = 512
  
 TEXT_COLS = ("title", "section", "text")
@@ -45,13 +45,7 @@ def build_corpus(df: pd.DataFrame) -> pd.DataFrame:
     so BGE's tokenizer sees clean sentence boundaries. Empty components are
     skipped — a row with no section becomes ``"Title. Text."`` not ``"Title.
     . Text."``.
-    """
-    before = len(df)
-    df = df.drop_duplicates(subset=["text"]).reset_index(drop=True)
-    dropped = before - len(df)
-    if dropped:
-        print(f"[info] dropped {dropped} duplicate rows on 'text'")
- 
+    """ 
     for col in TEXT_COLS:
         df[col] = df[col].fillna("").astype(str)
  

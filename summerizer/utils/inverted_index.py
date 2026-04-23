@@ -6,7 +6,7 @@ own inverted index, doc lengths, doc frequencies, idf table, and avgdl, so
 short fields (``topic``, ``title``) are length-normalized against other short
 fields rather than against the much longer body text.
 
-The pickled output at ``data/processed/indexes/bm25_index.pkl`` has the shape::
+The pickled output at ``data/indices/bm25_index.pkl`` has the shape::
 
     {
         "fields": {
@@ -22,7 +22,7 @@ The pickled output at ``data/processed/indexes/bm25_index.pkl`` has the shape::
 
 Run from the repo root::
 
-    python utils/inverted_index.py
+    python -m summerizer.utils.inverted_index
 """
 from __future__ import annotations
 
@@ -34,10 +34,10 @@ from typing import Any
 
 import pandas as pd
 
-from utils.text_cleaning import clean_text
+from summerizer.utils.text_cleaning import clean_text
 
 IN_FILE = Path("data/processed/cleaned_data.csv")
-OUT_DIR = Path("data/processed/indexes")
+OUT_DIR = Path("data/indices")
 OUT_FILE = OUT_DIR / "bm25_index.pkl"
 
 DEFAULT_K1 = 1.5

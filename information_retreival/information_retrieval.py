@@ -19,9 +19,9 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from utils.text_cleaning import clean_query_text
+from summerizer.utils.text_cleaning import clean_query_text
 
-DEFAULT_INDEX_PATH = "data/processed/indexes/bm25_index.pkl"
+DEFAULT_INDEX_PATH = "data/indices/bm25_index.pkl"
 
 # Field weights. Short, high-signal fields (topic, title) dominate; body text
 # contributes but is down-weighted because it's much longer and noisier.
