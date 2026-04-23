@@ -1,4 +1,4 @@
-"""Minimal Flask demo for the BM25 retriever.
+"""Minimal Flask demo for the Hybrid (BM25 + Dense, RRF) retriever.
 
 Run from the repo root::
 
@@ -7,29 +7,42 @@ Run from the repo root::
 Then open http://127.0.0.1:5000/ in a browser.
 
 The page has one input box, one submit button, and a results area. All
-retrieval logic lives in ``utils.information_retrieval.BM25Retriever``; this
-file is just the HTTP surface.
+retrieval logic lives in ``information_retreival.hybrid_retrieval.HybridRetriever``;
+this file is just the HTTP surface.
+
+Each result shows the fused RRF score plus the per-retriever rank/score so
+you can see *why* a doc is ranked where it is — e.g. "BM25 missed this
+(rank=None) but dense put it at rank 1" is a concrete sign that hybrid
+fusion is pulling its weight.
 """
 from __future__ import annotations
 
 from flask import Flask, render_template_string, request
 
-from information_retreival.information_retrieval import BM25Retriever
+from information_retreival.hybrid_retrieval import HybridRetriever
 
 app = Flask(__name__)
 
-# Load the index once at import time so every request reuses the same
-# in-memory state instead of unpickling per query.
-retriever = BM25Retriever()
+# Load both sub-indexes once at import time so every request reuses the
+# same in-memory state instead of re-loading per query.
+retriever = HybridRetriever()
 
 PAGE = """<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>BM25 Demo</title>
+  <title>Hybrid Retrieval Demo (BM25 + Dense, RRF)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2em auto; padding: 0 1em; }
+    li { margin-bottom: 1.5em; }
+    .scores { color: #555; font-size: 0.9em; }
+    .missing { color: #aaa; }
+    code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+  </style>
 </head>
 <body>
-  <h1>BM25 Demo</h1>
+  <h1>Hybrid Retrieval Demo</h1>
+  <p><small>BM25 + BGE dense, fused by Reciprocal Rank Fusion (k=60).</small></p>
 
   <form method="post" action="/">
     <label for="q">Query:</label>
@@ -48,16 +61,24 @@ PAGE = """<!doctype html>
         {% for r in results %}
           <li>
             <p>
-              <strong>final_score:</strong> {{ '%.4f' % r.final_score }}
+              <strong>RRF score:</strong> {{ '%.4f' % r.final_score }}
               &nbsp;<strong>doc_id:</strong> {{ r.doc_id }}
               &nbsp;<strong>topic:</strong> {{ r.topic|e }}
             </p>
-            <p>
-              <small>
-                <strong>bm25_topic:</strong> {{ '%.4f' % r.bm25_topic }}
-                &nbsp;<strong>bm25_title:</strong> {{ '%.4f' % r.bm25_title }}
-                &nbsp;<strong>bm25_text:</strong> {{ '%.4f' % r.bm25_text }}
-              </small>
+            <p class="scores">
+              <strong>BM25:</strong>
+              {% if r.bm25_rank %}
+                rank={{ r.bm25_rank }}, score={{ '%.3f' % r.bm25_score }}
+              {% else %}
+                <span class="missing">not retrieved</span>
+              {% endif %}
+              &nbsp;|&nbsp;
+              <strong>Dense:</strong>
+              {% if r.dense_rank %}
+                rank={{ r.dense_rank }}, score={{ '%.3f' % r.dense_score }}
+              {% else %}
+                <span class="missing">not retrieved</span>
+              {% endif %}
             </p>
             {% if r.title %}<p><strong>title:</strong> {{ r.title|e }}</p>{% endif %}
             {% if r.section %}<p><strong>section:</strong> {{ r.section|e }}</p>{% endif %}
@@ -85,7 +106,7 @@ def index():
         submitted = True
         query = (request.form.get("query") or "").strip()
         if query:
-            results = retriever.search(query, top_k=3)
+            results = retriever.search(query, top_k=5)
     return render_template_string(
         PAGE, query=query, results=results, submitted=submitted
     )

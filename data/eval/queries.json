@@ -1,0 +1,74 @@
+[
+  {
+    "query": "How do I apply for an F-1 student visa?",
+    "relevant": [0]
+  },
+  {
+    "query": "Can my spouse come with me to the United States?",
+    "relevant": [1, 2]
+  },
+  {
+    "query": "What is the I-901 SEVIS fee and how do I pay it?",
+    "relevant": [106, 107, 108, 109, 88]
+  },
+  {
+    "query": "How do I change from F-1 to H-1B status?",
+    "relevant": [8, 11, 12, 13, 14]
+  },
+  {
+    "query": "How can I get an ITIN for tax filing?",
+    "relevant": [89, 90, 91]
+  },
+  {
+    "query": "Am I allowed to drive in the US as an international student?",
+    "relevant": [23, 24, 25, 26]
+  },
+  {
+    "query": "How many hours can I work on campus?",
+    "relevant": [120, 119]
+  },
+  {
+    "query": "Can F-1 students work off campus?",
+    "relevant": [121, 119]
+  },
+  {
+    "query": "What is OPT and how do I apply?",
+    "relevant": [135, 144, 146]
+  },
+  {
+    "query": "What is curricular practical training?",
+    "relevant": [136]
+  },
+  {
+    "query": "How do I transfer to another school?",
+    "relevant": [17, 18, 19, 129]
+  },
+  {
+    "query": "What should I do if I lost my I-20 at the airport?",
+    "relevant": [39, 31]
+  },
+  {
+    "query": "How do I apply for a social security number?",
+    "relevant": [103, 104, 105]
+  },
+  {
+    "query": "What is the Cap Gap Extension?",
+    "relevant": [11, 14, 15, 16]
+  },
+  {
+    "query": "How do I maintain my F-1 status?",
+    "relevant": [95, 97, 98, 99]
+  },
+  {
+    "query": "What is STEM OPT?",
+    "relevant": [147, 76]
+  },
+  {
+    "query": "How do I prove financial ability for my student visa?",
+    "relevant": [28, 29]
+  },
+  {
+    "query": "What is E-Verify?",
+    "relevant": [140, 141]
+  }
+]
