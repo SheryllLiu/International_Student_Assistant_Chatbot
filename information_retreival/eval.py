@@ -6,13 +6,12 @@ Metrics (averaged across queries), using ``top_k = 5``:
 * **R@5**   — of all relevant docs, what fraction made the top-5.
 * **MRR**   — mean of 1 / (rank of first relevant hit); 0 if none found.
 * **Hit@5** — fraction of queries with at least one relevant doc in top-5.
+* **F1**    — harmonic mean of Precision and Recall.
 
-All four are standard IR metrics. P@5 and MRR are usually the two reported in
-a slide; Hit@5 is a softer floor ("did we find *anything* useful?").
+All five are standard IR metrics.
 
 Gold set lives at ``data/eval/queries.json`` as a list of
-``{"query": str, "relevant": [doc_id, ...]}`` objects. Doc ids are the
-``row_id`` / BM25 ``doc_id`` (the two are aligned by construction).
+``{"query": str, "relevant": [doc_id, ...]}`` objects.
 
 Run from repo root::
 
@@ -56,11 +55,18 @@ def hit_at_k(retrieved: list[int], relevant: set[int], k: int) -> float:
     return 1.0 if any(d in relevant for d in retrieved[:k]) else 0.0
 
 
+# ✅ NEW: F1 Score
+def f1_score(p: float, r: float) -> float:
+    if p + r == 0:
+        return 0.0
+    return 2 * p * r / (p + r)
+
+
 def evaluate(
     retriever: Any, queries: list[dict], k: int = TOP_K
 ) -> dict[str, Any]:
     """Run ``retriever`` over every query and return aggregate + per-query stats."""
-    p_scores, r_scores, rr_scores, hit_scores = [], [], [], []
+    p_scores, r_scores, rr_scores, hit_scores, f1_scores = [], [], [], [], []
     per_query: list[dict[str, Any]] = []
 
     for q in queries:
@@ -73,10 +79,14 @@ def evaluate(
         rr = reciprocal_rank(retrieved, relevant)
         h = hit_at_k(retrieved, relevant, k)
 
+        # ✅ NEW: F1 calculation
+        f1 = f1_score(p, r)
+
         p_scores.append(p)
         r_scores.append(r)
         rr_scores.append(rr)
         hit_scores.append(h)
+        f1_scores.append(f1)
 
         per_query.append(
             {
@@ -86,6 +96,7 @@ def evaluate(
                 f"P@{k}": p,
                 f"R@{k}": r,
                 "RR": rr,
+                "F1": f1,  # optional per-query visibility
             }
         )
 
@@ -95,6 +106,7 @@ def evaluate(
         f"R@{k}": sum(r_scores) / n,
         "MRR": sum(rr_scores) / n,
         f"Hit@{k}": sum(hit_scores) / n,
+        "F1": sum(f1_scores) / n,  # ✅ NEW
         "per_query": per_query,
     }
 
@@ -103,12 +115,15 @@ def print_summary(bm25_res: dict, hybrid_res: dict, k: int) -> None:
     print("=" * 68)
     print(f"{'Metric':<10} {'BM25':>12} {'Hybrid':>12} {'Δ (abs)':>12} {'Δ (%)':>12}")
     print("-" * 68)
-    for metric in (f"P@{k}", f"R@{k}", "MRR", f"Hit@{k}"):
+
+    # ✅ UPDATED: include F1
+    for metric in (f"P@{k}", f"R@{k}", "MRR", f"Hit@{k}", "F1"):
         b = bm25_res[metric]
         h = hybrid_res[metric]
         delta = h - b
         pct = f"{delta / b * 100:+.1f}%" if b else "—"
         print(f"{metric:<10} {b:>12.4f} {h:>12.4f} {delta:>+12.4f} {pct:>12}")
+
     print("=" * 68)
 
 

@@ -1,0 +1,34 @@
+[
+  {
+    "query": "What is OPT and how do I apply?",
+    "reference": "Optional Practical Training allows F-1 students to work in their field of study after completing their program and requires an application through USCIS."
+  },
+  {
+    "query": "How do I apply for a social security number?",
+    "reference": "F-1 students can apply for a Social Security Number after receiving employment authorization and a job offer from an eligible employer."
+  },
+  {
+    "query": "Can F-1 students work off campus?",
+    "reference": "F-1 students may work off campus only with proper authorization such as CPT or OPT and must follow USCIS regulations."
+  },
+  {
+    "query": "What is curricular practical training?",
+    "reference": "Curricular Practical Training allows F-1 students to gain work experience related to their major while enrolled in their academic program."
+  },
+  {
+    "query": "How do I maintain my F-1 status?",
+    "reference": "Students must maintain full-time enrollment, keep documents valid, and follow employment and reporting rules to maintain F-1 status."
+  },
+  {
+    "query": "What is STEM OPT?",
+    "reference": "STEM OPT is a 24-month extension of Optional Practical Training available to students with qualifying STEM degrees."
+  },
+  {
+    "query": "How do I apply for an F-1 student visa?",
+    "reference": "Students must receive an I-20, pay the SEVIS fee, complete the DS-160 form, and attend a visa interview at a U.S. embassy."
+  },
+  {
+    "query": "What is the I-901 SEVIS fee and how do I pay it?",
+    "reference": "The I-901 SEVIS fee is required for F-1 visa applicants and must be paid online before attending the visa interview."
+  }
+]
