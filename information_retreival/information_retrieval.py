@@ -19,7 +19,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from summerizer.utils.text_cleaning import clean_query_text
+from summarizer.utils.text_cleaning import clean_query_text
 
 DEFAULT_INDEX_PATH = "data/indices/bm25_index.pkl"
 

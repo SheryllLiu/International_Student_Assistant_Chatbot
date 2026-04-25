@@ -21,11 +21,14 @@ from flask import Flask, render_template_string, request
 
 from information_retreival.hybrid_retrieval import HybridRetriever
 
+from summarizer.utils.gamma4 import Gamma4Summarizer
+
 app = Flask(__name__)
 
 # Load both sub-indexes once at import time so every request reuses the
 # same in-memory state instead of re-loading per query.
 retriever = HybridRetriever()
+summarizer = Gamma4Summarizer()
 
 PAGE = """<!doctype html>
 <html lang="en">
@@ -56,6 +59,8 @@ PAGE = """<!doctype html>
     {% elif not results %}
       <p><em>No results found.</em></p>
     {% else %}
+      <h2>Summary</h2>
+      <p>{{ summary|e }}</p>
       <h2>Results for: <code>{{ query|e }}</code></h2>
       <ol>
         {% for r in results %}
@@ -100,15 +105,24 @@ PAGE = """<!doctype html>
 @app.route("/", methods=["GET", "POST"])
 def index():
     query = ""
-    results: list = []
+    results = []
+    summary = ""
     submitted = False
+
     if request.method == "POST":
         submitted = True
         query = (request.form.get("query") or "").strip()
+
         if query:
             results = retriever.search(query, top_k=5)
+            summary = summarizer.summarize(query, results)
+
     return render_template_string(
-        PAGE, query=query, results=results, submitted=submitted
+        PAGE,
+        query=query,
+        results=results,
+        summary=summary,
+        submitted=submitted,
     )
 
 

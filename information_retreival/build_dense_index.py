@@ -32,7 +32,7 @@ OUT_CORPUS = Path("data/processed/embedding_corpus.csv")
 OUT_INDEX_DIR = Path("data/indices")
 OUT_INDEX = OUT_INDEX_DIR / "faiss.index"
  
-MODEL_NAME = "/home/shery/models/bge-small-en-v1.5"
+MODEL_NAME = "BAAI/bge-small-en-v1.5"
 BGE_MAX_TOKENS = 512
  
 TEXT_COLS = ("title", "section", "text")
