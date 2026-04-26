@@ -1,15 +1,21 @@
 name: f1-immigration-assistant
+
 channels:
   - conda-forge
+
 dependencies:
   - python=3.11
+  - requests>=2.31
+  - beautifulsoup4>=4.12
+  - pandas>=2.3
+  - lxml
+  - flask>=3.1
+  - click>=8.1
+
+  # pip-only packages
   - pip
   - pip:
-      - requests>=2.31
-      - beautifulsoup4>=4.12
-      - rank-bm25>=0.2.2
       - openai>=1.40
-      - click>=8.1
-      - pytest>=7.4
-      - ruff>=0.4
+      - rank-bm25>=0.2.2
+      #Install your package
       - -e .
