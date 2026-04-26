@@ -34,7 +34,7 @@ from typing import Any
 
 import pandas as pd
 
-from summerizer.utils.text_cleaning import clean_text
+from summarizer.utils.text_cleaning import clean_text
 
 IN_FILE = Path("data/processed/cleaned_data.csv")
 OUT_DIR = Path("data/indices")
