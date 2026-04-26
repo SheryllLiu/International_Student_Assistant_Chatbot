@@ -7,6 +7,22 @@ Office of Global Services (OGS) public pages.
 The heart of the package is a clean BM25 retrieval pipeline; OpenAI is used only for
 the final answer-synthesis step.
 
+## Table of Contents
+
+Installation
+
+Team
+
+Scope
+
+Architecture
+
+
+
+## Installation
+
+Requires at least Python 3.10
+
 ## Team
 
 - TEAM_MEMBER_1 (full name)
