@@ -24,7 +24,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from information_retreival.hybrid_retrieval import HybridRetriever
+from information_retrieval.hybrid_retrieval import HybridRetriever
 from information_retreival.information_retrieval import BM25Retriever
 
 QUERIES_PATH = Path("data/eval/queries.json")

@@ -20,7 +20,7 @@ import faiss
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
-from information_retreival.build_dense_index import MODEL_NAME
+from rag_chatbot.information_retrieval.build_dense_index import MODEL_NAME
 
 DEFAULT_INDEX_PATH = "data/indices/faiss.index"
 DEFAULT_CORPUS_PATH = "data/processed/embedding_corpus.csv"

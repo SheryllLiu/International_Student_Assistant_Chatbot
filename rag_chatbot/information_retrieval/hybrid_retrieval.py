@@ -22,8 +22,8 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Any
 
-from information_retreival.dense_retrieval import DenseRetriever
-from information_retreival.information_retrieval import BM25Retriever
+from rag_chatbot.information_retrieval.dense_retrieval import DenseRetriever
+from rag_chatbot.information_retrieval.bm25_retrieval import BM25Retriever
 
 DEFAULT_RRF_K = 60
 DEFAULT_CANDIDATE_K = 50

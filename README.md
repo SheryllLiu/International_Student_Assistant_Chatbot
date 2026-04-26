@@ -1,4 +1,4 @@
-# Georgetown F-1 Immigration Compliance Assistant
+# Internation Students Chatbot
 
 A focused Information Retrieval + RAG package that answers compliance questions for
 Georgetown University **F-1 international students** using only approved Georgetown
@@ -9,13 +9,11 @@ the final answer-synthesis step.
 
 ## Team
 
-- TEAM_MEMBER_1 (full name)
-- TEAM_MEMBER_2 (full name)
-- TEAM_MEMBER_3 (full name)
-- TEAM_MEMBER_4 (full name)
+- Tianwei(Sophie) Shi
+- Shuchen(Sheryll) Liu
+- Hima Bathula
+- Robert George
 
-> Replace the placeholders above with the full names of all team members before
-> submission.
 
 ## Scope
 
@@ -48,25 +46,7 @@ final grounded answer.
 ## Architecture
 
 ```
-            approved OGS URLs
-                   │
-            crawler.py  ──►  raw HTML  ──►  parser.py  ──►  SourceDocument
-                                                                 │
-                                                          chunker.py
-                                                                 │
-                                                          DocumentChunk[]
-                                                                 │
-                       preprocessing.py  ────────────►   bm25_retriever.py
-                                                                 │
-                                              query_analysis.py  │
-                                                       │         │
-                                                       ▼         ▼
-                                                        pipeline.py
-                                                             │
-                                                     ┌───────┴───────┐
-                                                     ▼               ▼
-                                                evaluation.py   generator.py
-                                                                  (OpenAI)
+...................
 ```
 
 A program architecture diagram (made with draw.io or similar software) will be
@@ -147,34 +127,7 @@ python scripts/run_demo.py
 ## Package layout
 
 ```
-final_group_project/
-├── pyproject.toml            # modern packaging, ruff + pytest config
-├── environment.yml           # conda alternative
-├── README.md
-├── data/
-│   ├── sample/               # tiny bundled HTML for offline demo / tests
-│   └── eval/                 # small query set + relevance judgments
-├── scripts/                  # thin wrappers around the CLI commands
-│   ├── crawl_site.py
-│   ├── build_index.py
-│   ├── evaluate.py
-│   └── run_demo.py
-├── src/f1_immigration_assistant/
-│   ├── config.py             # allowlist URLs, retrieval defaults
-│   ├── logging_config.py     # one-call logging setup
-│   ├── models.py             # dataclasses: SourceDocument, DocumentChunk, ...
-│   ├── preprocessing.py      # single shared tokenize/normalize pipeline
-│   ├── crawler.py            # constrained allowlist crawler
-│   ├── parser.py             # HTML -> SourceDocument
-│   ├── chunker.py            # heading-aware chunking
-│   ├── bm25_retriever.py     # main retriever (rank-bm25)
-│   ├── query_analysis.py     # lightweight intent / risk hints
-│   ├── evaluation.py         # Precision@k, Recall@k, optional mAP
-│   ├── generator.py          # OpenAI RAG layer with local stub fallback
-│   ├── pipeline.py           # top-level end-to-end workflow
-│   ├── cli.py                # click-based CLI
-│   └── utils.py              # small shared helpers
-└── tests/                    # pytest suite
+
 ```
 
 ## Testing

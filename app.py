@@ -19,8 +19,7 @@ from __future__ import annotations
 
 from flask import Flask, render_template_string, request
 
-from information_retreival.hybrid_retrieval import HybridRetriever
-
+from rag_chatbot.information_retrieval.hybrid_retrieval import HybridRetriever  
 app = Flask(__name__)
 
 # Load both sub-indexes once at import time so every request reuses the
@@ -44,11 +43,10 @@ PAGE = """<!doctype html>
   <h1>Hybrid Retrieval Demo</h1>
   <p><small>BM25 + BGE dense, fused by Reciprocal Rank Fusion (k=60).</small></p>
 
-  <form method="post" action="/">
-    <label for="q">Query:</label>
-    <input type="text" id="q" name="query" value="{{ query|e }}" size="60" autofocus>
-    <button type="submit">Search</button>
-  </form>
+    <form class="search" method="post" action="/">
+      <input type="text" id="q" name="query" value="{{ query|e }}" placeholder="Enter a query..." autofocus>
+      <button type="submit">Search</button>
+    </form>
 
   {% if submitted %}
     {% if not query %}
@@ -92,6 +90,7 @@ PAGE = """<!doctype html>
       </ol>
     {% endif %}
   {% endif %}
+  </div>
 </body>
 </html>
 """
@@ -110,6 +109,11 @@ def index():
     return render_template_string(
         PAGE, query=query, results=results, submitted=submitted
     )
+
+
+## Add summarizer here
+
+
 
 
 if __name__ == "__main__":
