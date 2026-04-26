@@ -144,6 +144,14 @@ also available:
 python scripts/run_demo.py
 ```
 
+## Evaluation Metrics:
+Precision@5
+Recall@5
+MAP
+F1 Score
+ROUGE
+BERTScore
+
 ## Package layout
 
 ```
