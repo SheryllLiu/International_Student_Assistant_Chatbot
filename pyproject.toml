@@ -26,6 +26,8 @@ dependencies = [
     "nltk>=3.9",
     "faiss-cpu>=1.13.2",
     "sentence-transformers>=5.4.1",
+    "rouge-score>=0.1.2",
+    "bert-score>=0.3.13",
 ]
 
 [project.optional-dependencies]

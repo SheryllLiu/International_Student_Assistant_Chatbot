@@ -23,8 +23,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from information_retrieval.hybrid_retrieval import HybridRetriever
-from information_retreival.information_retrieval import BM25Retriever
+from rag_chatbot.information_retrieval.hybrid_retrieval import HybridRetriever
+from rag_chatbot.information_retrieval.bm25_retrieval import BM25Retriever
 
 QUERIES_PATH = Path("data/eval/queries.json")
 TOP_K = 5

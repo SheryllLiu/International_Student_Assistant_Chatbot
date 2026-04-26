@@ -5,10 +5,10 @@ from rouge_score import rouge_scorer
 from bert_score import score as bertscore
 
 #Get the retriever and summarizer
-from information_retreival.hybrid_retrieval import HybridRetriever
-from summarizer.utils.gamma4 import Gamma4Summarizer
+from rag_chatbot.information_retrieval.hybrid_retrieval import HybridRetriever
+from rag_chatbot.summarizer.gamma4 import Gamma4Summarizer
 
-DATA_PATH = Path("summarizer/eval/summaries.json")
+DATA_PATH = Path('data/eval/summaries.json')
 TOP_K = 5
 
 def load_data():

@@ -20,6 +20,7 @@ from __future__ import annotations
 from flask import Flask, render_template_string, request
 
 from rag_chatbot.information_retrieval.hybrid_retrieval import HybridRetriever  
+from rag_chatbot.summarizer.gamma4 import Gamma4Summarizer
 
 app = Flask(__name__)
 
