@@ -11,8 +11,10 @@ turn equals the ``doc_id`` used by ``BM25Retriever`` (both pipelines read the
 same de-duplicated 148-row source). That shared integer key is what
 ``HybridRetriever`` fuses on.
 """
+
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +22,9 @@ import faiss
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
-from rag_chatbot.information_retrieval.build_dense_index import MODEL_NAME
+from rag_chatbot.utils.build_dense_index import MODEL_NAME
+
+logger = logging.getLogger("isa.retrieval.dense")
 
 DEFAULT_INDEX_PATH = "data/indices/faiss.index"
 DEFAULT_CORPUS_PATH = "data/processed/embedding_corpus.csv"
@@ -42,6 +46,7 @@ class DenseRetriever:
         corpus_path: str | Path = DEFAULT_CORPUS_PATH,
         model_name: str = MODEL_NAME,
     ):
+        """Load the FAISS index, paired corpus, and the BGE encoder."""
         self.index = faiss.read_index(str(index_path))
         self.corpus = pd.read_csv(corpus_path, keep_default_na=False)
         self.model = SentenceTransformer(model_name)
@@ -50,6 +55,7 @@ class DenseRetriever:
         """Return the top-``top_k`` documents for ``query`` by cosine score."""
         if not isinstance(query, str) or not query.strip():
             return []
+        logger.debug("query=%r  top_k=%d", query, top_k)
 
         emb = self.model.encode(
             [QUERY_INSTRUCTION + query],
@@ -59,6 +65,7 @@ class DenseRetriever:
 
         scores, ids = self.index.search(emb, top_k)
 
+        logger.debug("returning %d results for query %r", len(ids[0]), query)
         results: list[dict[str, Any]] = []
         for score, row_id in zip(scores[0], ids[0], strict=True):
             # FAISS pads with -1 when the index has fewer than top_k vectors.

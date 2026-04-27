@@ -12,14 +12,18 @@ Only documents that hit at least one query term in at least one field are
 scored — we walk the posting lists per field rather than iterating the full
 corpus. OOV terms are silently skipped.
 """
+
 from __future__ import annotations
 
+import logging
 import pickle
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
 from rag_chatbot.utils.text_cleaning import clean_query_text
+
+logger = logging.getLogger("isa.retrieval.bm25")
 
 DEFAULT_INDEX_PATH = "data/indices/bm25_index.pkl"
 
@@ -28,7 +32,7 @@ DEFAULT_INDEX_PATH = "data/indices/bm25_index.pkl"
 FIELD_WEIGHTS: dict[str, float] = {
     "topic": 3.0,
     "title": 2.0,
-    "text":  3.0,
+    "text": 3.0,
 }
 
 # Raw display fields surfaced alongside the score breakdown.
@@ -39,10 +43,12 @@ class BM25Retriever:
     """Field-weighted BM25 over topic / title / text sub-indexes."""
 
     def __init__(self, index_path: str | Path = DEFAULT_INDEX_PATH):
+        """Load the pickled per-field BM25 index from ``index_path``."""
         self.index_path = Path(index_path)
         self.load_index(self.index_path)
 
     def load_index(self, index_path: str | Path) -> None:
+        """Read the pickled index and unpack its fields into ``self``."""
         path = Path(index_path)
         with open(path, "rb") as f:
             index = pickle.load(f)
@@ -52,9 +58,7 @@ class BM25Retriever:
         self.doc_store: dict[int, dict[str, Any]] = index["doc_store"]
         self.N: int = index["N"]
 
-    def _score_field(
-        self, field_name: str, tokens: list[str]
-    ) -> dict[int, float]:
+    def _score_field(self, field_name: str, tokens: list[str]) -> dict[int, float]:
         """Standard BM25 on one field's posting lists. Returns doc_id -> score."""
         sub = self.fields[field_name]
         inverted_index = sub["inverted_index"]
@@ -83,9 +87,11 @@ class BM25Retriever:
         if not isinstance(query, str) or not query.strip():
             return []
 
+        logger.debug("query=%r  top_k=%d", query, top_k)
         cleaned = clean_query_text(query)
         tokens = cleaned.split() if cleaned else []
         if not tokens:
+            logger.warning("query %r produced no tokens after cleaning", query)
             return []
 
         per_field_scores: dict[str, dict[int, float]] = {
@@ -99,6 +105,7 @@ class BM25Retriever:
             hit_doc_ids.update(field_scores.keys())
 
         if not hit_doc_ids:
+            logger.debug("no hits for query %r", query)
             return []
 
         final: list[tuple[int, float, dict[str, float]]] = []
@@ -114,6 +121,7 @@ class BM25Retriever:
         final.sort(key=lambda t: t[1], reverse=True)
         final = final[:top_k]
 
+        logger.debug("returning %d results for query %r", len(final), query)
         results: list[dict[str, Any]] = []
         for doc_id, total, breakdown in final:
             meta = self.doc_store.get(doc_id, {})
@@ -122,7 +130,7 @@ class BM25Retriever:
                 "final_score": total,
                 "bm25_topic": breakdown["topic"],
                 "bm25_title": breakdown["title"],
-                "bm25_text":  breakdown["text"],
+                "bm25_text": breakdown["text"],
                 "topic": meta.get("topic", ""),
             }
             for field in RAW_RESULT_FIELDS:

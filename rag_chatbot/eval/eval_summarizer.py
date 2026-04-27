@@ -1,25 +1,29 @@
+"""Evaluate summarizer output against gold references using ROUGE and BERTScore."""
 
 import json
 from pathlib import Path
-from rouge_score import rouge_scorer
-from bert_score import score as bertscore
 
-#Get the retriever and summarizer
+from bert_score import score as bertscore
+from rouge_score import rouge_scorer
+
 from rag_chatbot.information_retrieval.hybrid_retrieval import HybridRetriever
 from rag_chatbot.summarizer.gamma4 import Gamma4Summarizer
 
-DATA_PATH = Path('data/eval/summaries.json')
+DATA_PATH = Path("data/eval/summaries.json")
 TOP_K = 5
 
+
 def load_data():
-    with open(DATA_PATH, "r") as f:
+    """Load the gold (query, reference) pairs from ``DATA_PATH``."""
+    with open(DATA_PATH) as f:
         return json.load(f)
 
 
 def compute_rouge(predictions, references):
+    """Return mean ROUGE-1/2/L F1 scores over the prediction/reference pairs."""
     scorer = rouge_scorer.RougeScorer(["rouge1", "rouge2", "rougeL"], use_stemmer=True)
     scores = {"rouge1": [], "rouge2": [], "rougeL": []}
-    for pred, ref in zip(predictions, references):
+    for pred, ref in zip(predictions, references, strict=True):
         s = scorer.score(ref, pred)
         scores["rouge1"].append(s["rouge1"].fmeasure)
         scores["rouge2"].append(s["rouge2"].fmeasure)
@@ -28,6 +32,7 @@ def compute_rouge(predictions, references):
 
 
 def compute_bertscore(predictions, references):
+    """Return mean BERTScore precision/recall/F1 over the prediction/reference pairs."""
     P, R, F1 = bertscore(predictions, references, lang="en")
     return {
         "precision": P.mean().item(),
@@ -37,6 +42,7 @@ def compute_bertscore(predictions, references):
 
 
 def main():
+    """Run the summarizer over the gold queries and print ROUGE + BERTScore."""
     data = load_data()
 
     retriever = HybridRetriever()

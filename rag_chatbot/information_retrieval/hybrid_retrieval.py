@@ -17,13 +17,17 @@ Fusion key is ``doc_id``: BM25's ``doc_id`` and Dense's ``row_id`` are the
 same integer because both indices are built from the same de-duplicated
 source in the same row order.
 """
+
 from __future__ import annotations
 
+import logging
 from collections import defaultdict
 from typing import Any
 
-from rag_chatbot.information_retrieval.dense_retrieval import DenseRetriever
 from rag_chatbot.information_retrieval.bm25_retrieval import BM25Retriever
+from rag_chatbot.information_retrieval.dense_retrieval import DenseRetriever
+
+logger = logging.getLogger("isa.retrieval.hybrid")
 
 DEFAULT_RRF_K = 60
 DEFAULT_CANDIDATE_K = 50
@@ -45,6 +49,7 @@ class HybridRetriever:
         rrf_k: int = DEFAULT_RRF_K,
         candidate_k: int = DEFAULT_CANDIDATE_K,
     ):
+        """Wire up the BM25 + dense backends and store the RRF parameters."""
         self.bm25 = bm25 if bm25 is not None else BM25Retriever()
         self.dense = dense if dense is not None else DenseRetriever()
         self.rrf_k = rrf_k
@@ -55,8 +60,10 @@ class HybridRetriever:
         if not isinstance(query, str) or not query.strip():
             return []
 
+        logger.debug("query=%r  top_k=%d  candidate_k=%d", query, top_k, self.candidate_k)
         bm25_hits = self.bm25.search(query, top_k=self.candidate_k)
         dense_hits = self.dense.search(query, top_k=self.candidate_k)
+        logger.debug("bm25=%d hits  dense=%d hits", len(bm25_hits), len(dense_hits))
 
         state: dict[int, dict[str, Any]] = defaultdict(
             lambda: {
@@ -87,10 +94,9 @@ class HybridRetriever:
                 if field in hit and field not in s["meta"]:
                     s["meta"][field] = hit[field]
 
-        ranked = sorted(
-            state.items(), key=lambda kv: kv[1]["rrf_score"], reverse=True
-        )[:top_k]
+        ranked = sorted(state.items(), key=lambda kv: kv[1]["rrf_score"], reverse=True)[:top_k]
 
+        logger.debug("returning %d fused results for query %r", len(ranked), query)
         results: list[dict[str, Any]] = []
         for doc_id, s in ranked:
             row: dict[str, Any] = {

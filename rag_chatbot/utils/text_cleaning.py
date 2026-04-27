@@ -21,6 +21,7 @@ Run batch cleaning from the repo root::
 
     python utils/text_cleaning.py
 """
+
 from __future__ import annotations
 
 import re
@@ -35,9 +36,11 @@ def _ensure_wordnet() -> None:
     """Make sure the WordNet corpus is available; fetch it if missing."""
     try:
         from nltk.corpus import wordnet
+
         wordnet.ensure_loaded()
     except LookupError:
         import nltk
+
         nltk.download("wordnet", quiet=True)
         nltk.download("omw-1.4", quiet=True)
 
@@ -59,30 +62,188 @@ RAW_TEXT_COLUMNS = ("title", "section", "text")
 # no runtime download step. If you prefer NLTK, swap this set for
 # ``nltk.corpus.stopwords.words('english')`` after calling
 # ``nltk.download('stopwords')``.
-STOPWORDS: frozenset[str] = frozenset({
-    "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you",
-    "you're", "you've", "you'll", "you'd", "your", "yours", "yourself",
-    "yourselves", "he", "him", "his", "himself", "she", "she's", "her",
-    "hers", "herself", "it", "it's", "its", "itself", "they", "them",
-    "their", "theirs", "themselves", "what", "which", "who", "whom", "this",
-    "that", "that'll", "these", "those", "am", "is", "are", "was", "were",
-    "be", "been", "being", "have", "has", "had", "having", "do", "does",
-    "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because",
-    "as", "until", "while", "of", "at", "by", "for", "with", "about",
-    "against", "between", "into", "through", "during", "before", "after",
-    "above", "below", "to", "from", "up", "down", "in", "out", "on", "off",
-    "over", "under", "again", "further", "then", "once", "here", "there",
-    "when", "where", "why", "how", "all", "any", "both", "each", "few",
-    "more", "most", "other", "some", "such", "no", "nor", "not", "only",
-    "own", "same", "so", "than", "too", "very", "t", "can", "will",
-    "just", "don", "don't", "should", "should've", "now", "d", "ll", "m",
-    "o", "re", "ve", "y", "ain", "aren", "aren't", "couldn", "couldn't",
-    "didn", "didn't", "doesn", "doesn't", "hadn", "hadn't", "hasn",
-    "hasn't", "haven", "haven't", "isn", "isn't", "ma", "mightn",
-    "mightn't", "mustn", "mustn't", "needn", "needn't", "shan", "shan't",
-    "shouldn", "shouldn't", "wasn", "wasn't", "weren", "weren't", "won",
-    "won't", "wouldn", "wouldn't",
-})
+STOPWORDS: frozenset[str] = frozenset(
+    {
+        "i",
+        "me",
+        "my",
+        "myself",
+        "we",
+        "our",
+        "ours",
+        "ourselves",
+        "you",
+        "you're",
+        "you've",
+        "you'll",
+        "you'd",
+        "your",
+        "yours",
+        "yourself",
+        "yourselves",
+        "he",
+        "him",
+        "his",
+        "himself",
+        "she",
+        "she's",
+        "her",
+        "hers",
+        "herself",
+        "it",
+        "it's",
+        "its",
+        "itself",
+        "they",
+        "them",
+        "their",
+        "theirs",
+        "themselves",
+        "what",
+        "which",
+        "who",
+        "whom",
+        "this",
+        "that",
+        "that'll",
+        "these",
+        "those",
+        "am",
+        "is",
+        "are",
+        "was",
+        "were",
+        "be",
+        "been",
+        "being",
+        "have",
+        "has",
+        "had",
+        "having",
+        "do",
+        "does",
+        "did",
+        "doing",
+        "a",
+        "an",
+        "the",
+        "and",
+        "but",
+        "if",
+        "or",
+        "because",
+        "as",
+        "until",
+        "while",
+        "of",
+        "at",
+        "by",
+        "for",
+        "with",
+        "about",
+        "against",
+        "between",
+        "into",
+        "through",
+        "during",
+        "before",
+        "after",
+        "above",
+        "below",
+        "to",
+        "from",
+        "up",
+        "down",
+        "in",
+        "out",
+        "on",
+        "off",
+        "over",
+        "under",
+        "again",
+        "further",
+        "then",
+        "once",
+        "here",
+        "there",
+        "when",
+        "where",
+        "why",
+        "how",
+        "all",
+        "any",
+        "both",
+        "each",
+        "few",
+        "more",
+        "most",
+        "other",
+        "some",
+        "such",
+        "no",
+        "nor",
+        "not",
+        "only",
+        "own",
+        "same",
+        "so",
+        "than",
+        "too",
+        "very",
+        "t",
+        "can",
+        "will",
+        "just",
+        "don",
+        "don't",
+        "should",
+        "should've",
+        "now",
+        "d",
+        "ll",
+        "m",
+        "o",
+        "re",
+        "ve",
+        "y",
+        "ain",
+        "aren",
+        "aren't",
+        "couldn",
+        "couldn't",
+        "didn",
+        "didn't",
+        "doesn",
+        "doesn't",
+        "hadn",
+        "hadn't",
+        "hasn",
+        "hasn't",
+        "haven",
+        "haven't",
+        "isn",
+        "isn't",
+        "ma",
+        "mightn",
+        "mightn't",
+        "mustn",
+        "mustn't",
+        "needn",
+        "needn't",
+        "shan",
+        "shan't",
+        "shouldn",
+        "shouldn't",
+        "wasn",
+        "wasn't",
+        "weren",
+        "weren't",
+        "won",
+        "won't",
+        "wouldn",
+        "wouldn't",
+    }
+)
 
 # After lowercasing, anything that is not an ASCII letter, digit, whitespace,
 # or hyphen becomes a space. Hyphens survive so tokens like ``f-1`` or
@@ -104,34 +265,61 @@ _COLLAPSE_WS = re.compile(r"\s+")
 # the shorter "e verify" key can fire on the same span.
 QUERY_TERM_NORMALIZATION: dict[str, str] = {
     # --- Section A: visa / status codes ---
-    "f1": "f-1",          "f 1": "f-1",
-    "f2": "f-2",          "f 2": "f-2",
-    "m1": "m-1",          "m 1": "m-1",
-    "m2": "m-2",          "m 2": "m-2",
-    "j1": "j-1",          "j 1": "j-1",
-    "j2": "j-2",          "j 2": "j-2",
-    "b1": "b-1",          "b 1": "b-1",
-    "b2": "b-2",          "b 2": "b-2",
-    "h1b": "h-1b",        "h 1b": "h-1b",
-    "h 1 b": "h-1b",      "h1-b": "h-1b",
+    "f1": "f-1",
+    "f 1": "f-1",
+    "f2": "f-2",
+    "f 2": "f-2",
+    "m1": "m-1",
+    "m 1": "m-1",
+    "m2": "m-2",
+    "m 2": "m-2",
+    "j1": "j-1",
+    "j 1": "j-1",
+    "j2": "j-2",
+    "j 2": "j-2",
+    "b1": "b-1",
+    "b 1": "b-1",
+    "b2": "b-2",
+    "b 2": "b-2",
+    "h1b": "h-1b",
+    "h 1b": "h-1b",
+    "h 1 b": "h-1b",
+    "h1-b": "h-1b",
     # --- Section A: USCIS / DHS form numbers ---
-    "i20": "i-20",        "i 20": "i-20",
-    "i94": "i-94",        "i 94": "i-94",
-    "i901": "i-901",      "i 901": "i-901",
-    "i515": "i-515",      "i 515": "i-515",
-    "i515a": "i-515a",    "i 515a": "i-515a",
-    "i539": "i-539",      "i 539": "i-539",
-    "i765": "i-765",      "i 765": "i-765",
-    "i766": "i-766",      "i 766": "i-766",
-    "i797": "i-797",      "i 797": "i-797",
-    "i797a": "i-797a",    "i 797a": "i-797a",
-    "i129": "i-129",      "i 129": "i-129",
-    "i290b": "i-290b",    "i 290b": "i-290b",
-    "i983": "i-983",      "i 983": "i-983",
-    "i9": "i-9",          "i 9": "i-9",
-    "i17": "i-17",        "i 17": "i-17",
-    "w7": "w-7",          "w 7": "w-7",
-    "ds2019": "ds-2019",  "ds 2019": "ds-2019",
+    "i20": "i-20",
+    "i 20": "i-20",
+    "i94": "i-94",
+    "i 94": "i-94",
+    "i901": "i-901",
+    "i 901": "i-901",
+    "i515": "i-515",
+    "i 515": "i-515",
+    "i515a": "i-515a",
+    "i 515a": "i-515a",
+    "i539": "i-539",
+    "i 539": "i-539",
+    "i765": "i-765",
+    "i 765": "i-765",
+    "i766": "i-766",
+    "i 766": "i-766",
+    "i797": "i-797",
+    "i 797": "i-797",
+    "i797a": "i-797a",
+    "i 797a": "i-797a",
+    "i129": "i-129",
+    "i 129": "i-129",
+    "i290b": "i-290b",
+    "i 290b": "i-290b",
+    "i983": "i-983",
+    "i 983": "i-983",
+    "i9": "i-9",
+    "i 9": "i-9",
+    "i17": "i-17",
+    "i 17": "i-17",
+    "w7": "w-7",
+    "w 7": "w-7",
+    "ds2019": "ds-2019",
+    "ds 2019": "ds-2019",
     "ssa l676": "ssa-l676",
     # --- Section A: compound terms (space-separated → hyphenated) ---
     "cap gap": "cap-gap",
@@ -174,14 +362,10 @@ QUERY_TERM_NORMALIZATION: dict[str, str] = {
 # boundaries so "ssa" does not fire inside "ssa-l676".
 _NORM_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (
-        re.compile(
-            r"(?<![a-zA-Z0-9-])" + re.escape(src) + r"(?![a-zA-Z0-9-])"
-        ),
+        re.compile(r"(?<![a-zA-Z0-9-])" + re.escape(src) + r"(?![a-zA-Z0-9-])"),
         dst,
     )
-    for src, dst in sorted(
-        QUERY_TERM_NORMALIZATION.items(), key=lambda kv: -len(kv[0])
-    )
+    for src, dst in sorted(QUERY_TERM_NORMALIZATION.items(), key=lambda kv: -len(kv[0]))
 ]
 
 
@@ -197,10 +381,7 @@ def normalize_text(text: str) -> str:
 
 def remove_stopwords(tokens: list[str]) -> list[str]:
     """Drop stopwords and tokens that collapse to pure hyphens."""
-    return [
-        tok for tok in tokens
-        if tok and tok.strip("-") and tok not in STOPWORDS
-    ]
+    return [tok for tok in tokens if tok and tok.strip("-") and tok not in STOPWORDS]
 
 
 @lru_cache(maxsize=50_000)
@@ -222,6 +403,7 @@ def lemmatize_token(tok: str) -> str:
 
 
 def lemmatize_tokens(tokens: list[str]) -> list[str]:
+    """Apply :func:`lemmatize_token` to every token in ``tokens``."""
     return [lemmatize_token(t) for t in tokens]
 
 
@@ -318,6 +500,7 @@ def build_cleaned_corpus(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
+    """Build the cleaned corpus from ``structured_text.csv`` and write it to disk."""
     if not IN_FILE.exists():
         raise FileNotFoundError(f"input not found: {IN_FILE}")
     # ``keep_default_na=False`` keeps empty topic/section cells as empty

@@ -17,20 +17,22 @@ Run from repo root::
 
     python -m information_retreival.eval
 """
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
 from typing import Any
 
-from rag_chatbot.information_retrieval.hybrid_retrieval import HybridRetriever
 from rag_chatbot.information_retrieval.bm25_retrieval import BM25Retriever
+from rag_chatbot.information_retrieval.hybrid_retrieval import HybridRetriever
 
 QUERIES_PATH = Path("data/eval/queries.json")
 TOP_K = 5
 
 
 def precision_at_k(retrieved: list[int], relevant: set[int], k: int) -> float:
+    """Fraction of the top-``k`` retrieved doc IDs that are in ``relevant``."""
     top = retrieved[:k]
     if not top:
         return 0.0
@@ -38,6 +40,7 @@ def precision_at_k(retrieved: list[int], relevant: set[int], k: int) -> float:
 
 
 def recall_at_k(retrieved: list[int], relevant: set[int], k: int) -> float:
+    """Fraction of ``relevant`` doc IDs that appear in the top ``k`` retrieved."""
     if not relevant:
         return 0.0
     top = retrieved[:k]
@@ -45,6 +48,7 @@ def recall_at_k(retrieved: list[int], relevant: set[int], k: int) -> float:
 
 
 def reciprocal_rank(retrieved: list[int], relevant: set[int]) -> float:
+    """Return ``1 / rank`` of the first relevant doc, or 0 if none are found."""
     for i, d in enumerate(retrieved, start=1):
         if d in relevant:
             return 1.0 / i
@@ -52,19 +56,18 @@ def reciprocal_rank(retrieved: list[int], relevant: set[int]) -> float:
 
 
 def hit_at_k(retrieved: list[int], relevant: set[int], k: int) -> float:
+    """1.0 if any relevant doc is in the top ``k`` retrieved, else 0.0."""
     return 1.0 if any(d in relevant for d in retrieved[:k]) else 0.0
 
 
-# ✅ NEW: F1 Score
 def f1_score(p: float, r: float) -> float:
+    """Harmonic mean of precision ``p`` and recall ``r`` (0 when both are 0)."""
     if p + r == 0:
         return 0.0
     return 2 * p * r / (p + r)
 
 
-def evaluate(
-    retriever: Any, queries: list[dict], k: int = TOP_K
-) -> dict[str, Any]:
+def evaluate(retriever: Any, queries: list[dict], k: int = TOP_K) -> dict[str, Any]:
     """Run ``retriever`` over every query and return aggregate + per-query stats."""
     p_scores, r_scores, rr_scores, hit_scores, f1_scores = [], [], [], [], []
     per_query: list[dict[str, Any]] = []
@@ -112,6 +115,7 @@ def evaluate(
 
 
 def print_summary(bm25_res: dict, hybrid_res: dict, k: int) -> None:
+    """Print a side-by-side BM25 vs Hybrid table for the aggregate metrics."""
     print("=" * 68)
     print(f"{'Metric':<10} {'BM25':>12} {'Hybrid':>12} {'Δ (abs)':>12} {'Δ (%)':>12}")
     print("-" * 68)
@@ -128,21 +132,19 @@ def print_summary(bm25_res: dict, hybrid_res: dict, k: int) -> None:
 
 
 def print_per_query(bm25_res: dict, hybrid_res: dict, k: int) -> None:
+    """Print per-query P@k for BM25 vs Hybrid with ↑/↓/= deltas."""
     print(f"\n[per-query P@{k} comparison]")
     print(f"{'Query':<55} {'BM25':>6} {'Hybrid':>7}  Δ")
     print("-" * 78)
-    for bq, hq in zip(
-        bm25_res["per_query"], hybrid_res["per_query"], strict=True
-    ):
+    for bq, hq in zip(bm25_res["per_query"], hybrid_res["per_query"], strict=True):
         q_short = bq["query"][:54]
         d = hq[f"P@{k}"] - bq[f"P@{k}"]
         marker = "↑" if d > 0 else "↓" if d < 0 else "="
-        print(
-            f"{q_short:<55} {bq[f'P@{k}']:>6.2f} {hq[f'P@{k}']:>7.2f}  {marker}"
-        )
+        print(f"{q_short:<55} {bq[f'P@{k}']:>6.2f} {hq[f'P@{k}']:>7.2f}  {marker}")
 
 
 def main() -> None:
+    """Load gold queries, evaluate BM25 and Hybrid, and print both views."""
     queries = json.loads(QUERIES_PATH.read_text())
     print(f"[info] {len(queries)} queries loaded from {QUERIES_PATH}")
 

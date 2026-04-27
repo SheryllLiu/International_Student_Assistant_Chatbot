@@ -1,21 +1,32 @@
+"""Local Ollama-backed summarizer that turns retrieved passages into a short answer."""
+
 from __future__ import annotations
+
+import logging
 
 import requests
 
+logger = logging.getLogger("isa.summarizer")
+
 
 class Gamma4Summarizer:
+    """Summarize retrieved passages by calling a locally running Ollama model."""
+
     def __init__(self):
-        # We keep the class name Gamma4Summarizer because that matches your project idea.
-        # But the actual Ollama model we call is gemma4:e2b.
+        """Configure the Ollama endpoint and model name."""
+        # The class name reflects the project plan; the actual Ollama tag is gemma4:e2b.
         self.model = "gemma4:e2b"
         self.url = "http://localhost:11434/api/generate"
 
     def summarize(self, query: str, results: list[dict]) -> str:
-        # If retrieval found nothing, we cannot summarize anything.
+        """Generate a short answer to ``query`` grounded in ``results``.
+
+        Falls back to the top result's text if the Ollama request fails.
+        """
         if not results:
+            logger.warning("summarize called with empty results for query %r", query)
             return "No results were found, so there is nothing to summarize."
 
-        # Build one text block from the top retrieved results.
         context = self.build_context(results)
 
         prompt = f"""
@@ -47,16 +58,16 @@ Summary:
 
             response.raise_for_status()
             data = response.json()
-
             return data.get("response", "").strip()
 
-        except Exception:
-            # Simple fallback if Ollama is not running.
+        except Exception as e:
+            logger.warning("Ollama request failed for query %r: %s", query, e)
             first_result = results[0]
             text = first_result.get("text") or first_result.get("raw_document") or ""
             return "Ollama is not running, so here is the top result instead:\n\n" + text[:500]
 
     def build_context(self, results: list[dict]) -> str:
+        """Format the top-3 retrieval hits into a compact prompt context block."""
         context_parts = []
 
         # Use only the top 3 results to keep the prompt simple.
@@ -67,10 +78,7 @@ Summary:
             text = result.get("text") or result.get("raw_document") or ""
 
             one_result_text = (
-                f"Document ID: {doc_id}\n"
-                f"Title: {title}\n"
-                f"Section: {section}\n"
-                f"Text: {text[:800]}\n"
+                f"Document ID: {doc_id}\nTitle: {title}\nSection: {section}\nText: {text[:800]}\n"
             )
 
             context_parts.append(one_result_text)

@@ -1,3 +1,5 @@
+"""Parse crawled Study-in-the-States HTML pages into a flat ``(topic, title, section, text)`` table."""
+
 from __future__ import annotations
 
 import re
@@ -20,9 +22,9 @@ RELATED_TAGS_PREFIX = "Related Tags:"
 
 
 def read_html(path: Path) -> BeautifulSoup:
+    """Read the file at ``path`` as HTML and return a parsed BeautifulSoup tree."""
     html = path.read_text(encoding="utf-8", errors="ignore")
     return BeautifulSoup(html, "lxml")
-
 
 
 def extract_topic(soup: BeautifulSoup) -> str:
@@ -50,6 +52,7 @@ def extract_topic(soup: BeautifulSoup) -> str:
 
 
 def clean_text(text: str) -> str:
+    """Replace non-breaking spaces and collapse runs of whitespace."""
     if not text:
         return ""
     text = text.replace("\xa0", " ")
@@ -58,10 +61,12 @@ def clean_text(text: str) -> str:
 
 
 def get_block_text(elem: Tag) -> str:
+    """Return the cleaned visible text of an HTML element."""
     return clean_text(elem.get_text(" ", strip=True))
 
 
 def has_ancestor(elem: Tag, tag_names: tuple[str, ...], stop_at: Tag) -> bool:
+    """True if ``elem`` has an ancestor in ``tag_names`` before reaching ``stop_at``."""
     parent = elem.parent
     while parent is not None and parent is not stop_at:
         if getattr(parent, "name", None) in tag_names:
@@ -96,11 +101,13 @@ def parse_article(article: Tag) -> list[dict]:
         nonlocal current_parts
         text = clean_text(" ".join(part for part in current_parts if part))
         if current_title and (text or current_section):
-            rows.append({
-                "title": current_title,
-                "section": current_section,
-                "text": text,
-            })
+            rows.append(
+                {
+                    "title": current_title,
+                    "section": current_section,
+                    "text": text,
+                }
+            )
         current_parts = []
 
     for elem in article.find_all(TARGET_TAGS):
@@ -155,6 +162,7 @@ def parse_article(article: Tag) -> list[dict]:
 
 
 def parse_file(path: Path) -> list[dict]:
+    """Parse one HTML file and return its rows tagged with the page topic."""
     soup = read_html(path)
     topic = extract_topic(soup)
     article = soup.find("article")
@@ -167,6 +175,7 @@ def parse_file(path: Path) -> list[dict]:
 
 
 def collect_rows(raw_dir: Path) -> list[dict]:
+    """Parse every ``.html`` file under ``raw_dir`` and concatenate their rows."""
     all_rows: list[dict] = []
     html_files = sorted(raw_dir.glob("*.html"))
     for html_path in html_files:
@@ -181,6 +190,7 @@ def collect_rows(raw_dir: Path) -> list[dict]:
 
 
 def main() -> None:
+    """Parse every raw HTML page, drop duplicates, and write ``structured_text.csv``."""
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     rows = collect_rows(RAW_DIR)
     df = pd.DataFrame(rows, columns=OUTPUT_COLUMNS)

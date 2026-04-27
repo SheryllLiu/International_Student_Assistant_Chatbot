@@ -24,8 +24,10 @@ Run from the repo root::
 
     python -m summerizer.utils.inverted_index
 """
+
 from __future__ import annotations
 
+import logging
 import math
 import pickle
 from collections import Counter, defaultdict
@@ -35,6 +37,8 @@ from typing import Any
 import pandas as pd
 
 from rag_chatbot.utils.text_cleaning import clean_text
+
+logger = logging.getLogger("isa.index.bm25")
 
 IN_FILE = Path("data/processed/cleaned_data.csv")
 OUT_DIR = Path("data/indices")
@@ -58,10 +62,7 @@ def tokenize_field(raw: Any) -> list[str]:
 
 def compute_idf(doc_freq: dict[str, int], N: int) -> dict[str, float]:
     """Standard BM25 idf, non-negative for all df ≥ 1."""
-    return {
-        term: math.log(1 + (N - df + 0.5) / (df + 0.5))
-        for term, df in doc_freq.items()
-    }
+    return {term: math.log(1 + (N - df + 0.5) / (df + 0.5)) for term, df in doc_freq.items()}
 
 
 def build_field_index(tokens_by_doc: dict[int, list[str]]) -> dict[str, Any]:
@@ -92,6 +93,7 @@ def build_field_index(tokens_by_doc: dict[int, list[str]]) -> dict[str, Any]:
 
 
 def _row_to_store_entry(row: pd.Series, columns: list[str]) -> dict[str, Any]:
+    """Snapshot a DataFrame row as a plain dict, replacing NaN with empty strings."""
     entry: dict[str, Any] = {}
     for col in columns:
         val = row[col]
@@ -109,9 +111,7 @@ def build_indexes(
     N = len(df)
     store_columns = list(df.columns)
 
-    tokens_per_field: dict[str, dict[int, list[str]]] = {
-        f: {} for f in INDEXED_FIELDS
-    }
+    tokens_per_field: dict[str, dict[int, list[str]]] = {f: {} for f in INDEXED_FIELDS}
     doc_store: dict[int, dict[str, Any]] = {}
 
     for doc_id, row in df.iterrows():
@@ -120,10 +120,7 @@ def build_indexes(
             tokens_per_field[field][doc_id] = tokenize_field(raw)
         doc_store[doc_id] = _row_to_store_entry(row, store_columns)
 
-    fields = {
-        field: build_field_index(tokens_per_field[field])
-        for field in INDEXED_FIELDS
-    }
+    fields = {field: build_field_index(tokens_per_field[field]) for field in INDEXED_FIELDS}
 
     return {
         "fields": fields,
@@ -135,28 +132,32 @@ def build_indexes(
 
 
 def save_index(index: dict[str, Any], output_path: Path) -> None:
+    """Pickle ``index`` to ``output_path``, creating parent dirs as needed."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "wb") as f:
         pickle.dump(index, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def load_index(index_path: Path) -> dict[str, Any]:
+    """Read a previously pickled BM25 index from disk."""
     with open(index_path, "rb") as f:
         return pickle.load(f)
 
 
 def main() -> None:
+    """Build the per-field BM25 indexes from the cleaned corpus and persist them."""
     if not IN_FILE.exists():
         raise FileNotFoundError(f"input not found: {IN_FILE}")
+    logger.info("loading corpus from %s", IN_FILE)
     df = pd.read_csv(IN_FILE, keep_default_na=False)
+    logger.info("building BM25 indexes for %d docs", len(df))
     index = build_indexes(df)
     save_index(index, OUT_FILE)
-    parts = []
     for field, sub in index["fields"].items():
-        parts.append(
-            f"{field}: |V|={len(sub['inverted_index'])}, avgdl={sub['avgdl']:.2f}"
+        logger.info(
+            "field=%s  vocab=%d  avgdl=%.2f", field, len(sub["inverted_index"]), sub["avgdl"]
         )
-    print(f"[ok] N={index['N']} docs; " + "; ".join(parts) + f" -> {OUT_FILE}")
+    logger.info("saved BM25 index — N=%d docs -> %s", index["N"], OUT_FILE)
 
 
 if __name__ == "__main__":
