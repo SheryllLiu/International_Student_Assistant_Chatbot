@@ -39,7 +39,7 @@ dev = [
 isa = "international_student_assistant.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/GU-DSAN5400-FA25/international-students-assistant"
+Homepage = "https://github.com/SheryllLiu/International_Student_Assistant_Chatbot"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/international_student_assistant", "rag_chatbot"]

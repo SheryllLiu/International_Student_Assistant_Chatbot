@@ -50,11 +50,12 @@ grounded summary.
 
 ## 0. Install Git LFS (required to fetch data files)
 
-Large binary artifacts (raw HTML, processed CSVs, BM25 pickle, FAISS index) live on Git LFS rather than in regular git history. Without LFS installed, your clone will contain tiny pointer files instead of the real data and the pipeline will fail to load.
-
 ```bash
 # install git-lfs (skip if you already have it)
 brew install git-lfs
+
+# If you do not use Homebrew
+winget install GitHub.GitLFS
 
 # one-time per machine: register the LFS hooks with git
 git lfs install
@@ -89,7 +90,7 @@ The summarizer calls a locally running Ollama server at `http://localhost:11434`
 # Install Ollama via Homebrew (skip if you already have it)
 brew install ollama
 
-# install Ollama (or from https://ollama.com/download）)
+# If you do not use Homebrew (or from https://ollama.com/download）
 curl -fsSL https://ollama.com/install.sh | sh
 
 # pull the model used by the summarizer
