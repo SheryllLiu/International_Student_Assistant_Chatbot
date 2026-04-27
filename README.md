@@ -48,27 +48,48 @@ grounded summary.
 
 # Setup
 
+## 0. Install Git LFS (required to fetch data files)
+
+Large binary artifacts (raw HTML, processed CSVs, BM25 pickle, FAISS index) live on Git LFS rather than in regular git history. Without LFS installed, your clone will contain tiny pointer files instead of the real data and the pipeline will fail to load.
+
+```bash
+# install git-lfs (skip if you already have it)
+brew install git-lfs
+
+# one-time per machine: register the LFS hooks with git
+git lfs install
+
+# if you already cloned before installing LFS, pull the real bytes now
+git lfs pull
+```
+
+The LFS rules live in `.gitattributes` at the repo root.
+
 ## 1. Configure the Python environment with uv
 
 We use [uv](https://docs.astral.sh/uv/) to manage the virtual environment and dependencies.
 A single command installs everything declared in `pyproject.toml`, including the dev tools (pytest, ruff).
 
 ```bash
-# install uv (skip if you already have it)
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# install uv via Homebrew (skip if you already have it)
+brew install uv
+
+# If you do not use Homebrew 
+curl -LsSf https://astral.sh/uv/install.sh | sh 
 
 # from the repo root, create the venv and install all dependencies
 uv sync --extra dev
 ```
-
-This creates `.venv/` and registers the `isa` CLI in editable mode. You don't need to activate the venv manually — every command below is prefixed with `uv run`, which executes inside the venv.
 
 ## 2. Install Ollama and pull the summarizer model
 
 The summarizer calls a locally running Ollama server at `http://localhost:11434`. It must be installed and have the `gemma4:e2b` model pulled before running the web app or the summarizer evaluation.
 
 ```bash
-# install Ollama
+# Install Ollama via Homebrew (skip if you already have it)
+brew install ollama
+
+# install Ollama (or from https://ollama.com/download）)
 curl -fsSL https://ollama.com/install.sh | sh
 
 # pull the model used by the summarizer
@@ -78,7 +99,7 @@ ollama pull gemma4:e2b
 ollama run gemma4:e2b "hello"
 ```
 
-Ollama runs as a background service after installation. If it's not running, the summarizer falls back to returning the top retrieved document instead.
+**Ollama runs as a background service after installation. If it's not running, the summarizer falls back to returning the top retrieved document instead.**
 
 # Run the Web App
 
@@ -103,7 +124,7 @@ Two evaluation pipelines are wired into the same `isa evaluate` command:
 - **IR evaluation** — compares BM25 vs Hybrid retrieval on a gold query set, reporting P@5, R@5, MRR, Hit@5, and F1.
 - **Summarizer evaluation** — scores generated summaries against gold references using ROUGE-1/2/L and BERTScore.
 
-## Run both (default)
+* Run both (default)
 
 ```bash
 uv run isa evaluate
@@ -111,7 +132,7 @@ uv run isa evaluate
 
 Runs IR first, then summarizer. **Requires Ollama to be running**, since the summarizer evaluation calls the model on every query.
 
-## Run only the IR evaluation
+* Run only the IR evaluation
 
 No Ollama needed — pure retrieval quality on the gold queries.
 
@@ -119,7 +140,7 @@ No Ollama needed — pure retrieval quality on the gold queries.
 uv run isa evaluate --no-summarizer
 ```
 
-## Run only the summarizer evaluation
+* Run only the summarizer evaluation
 
 Skips the BM25-vs-Hybrid IR comparison and only scores generated summaries.
 

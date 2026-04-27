@@ -1,4 +1,4 @@
 data/raw/*.html filter=lfs diff=lfs merge=lfs -text
-*.pkl filter=lfs diff=lfs merge=lfs -text
-*.index filter=lfs diff=lfs merge=lfs -text
-*.csv filter=lfs diff=lfs merge=lfs -text
+data/indices/*.pkl filter=lfs diff=lfs merge=lfs -text
+data/indices/*.index filter=lfs diff=lfs merge=lfs -text
+data/processed/*.csv filter=lfs diff=lfs merge=lfs -text
