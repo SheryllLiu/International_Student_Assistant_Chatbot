@@ -125,25 +125,21 @@ Two evaluation pipelines are wired into the same `isa evaluate` command:
 - **IR evaluation** — compares BM25 vs Hybrid retrieval on a gold query set, reporting P@5, R@5, MRR, Hit@5, and F1.
 - **Summarizer evaluation** — scores generated summaries against gold references using ROUGE-1/2/L and BERTScore.
 
-### Run both (default)
+#### 1. Run both (default)
+
+**Requires Ollama to be running**
 
 ```bash
 uv run isa evaluate
 ```
 
-Runs IR first, then summarizer. **Requires Ollama to be running**, since the summarizer evaluation calls the model on every query.
-
-### Run only the IR evaluation
-
-No Ollama needed — pure retrieval quality on the gold queries.
+#### 2. Run only the IR evaluation
 
 ```bash
 uv run isa evaluate --no-summarizer
 ```
 
-### Run only the summarizer evaluation
-
-Skips the BM25-vs-Hybrid IR comparison and only scores generated summaries.
+#### 3. Run only the summarizer evaluation
 
 ```bash
 uv run isa evaluate --no-ir
